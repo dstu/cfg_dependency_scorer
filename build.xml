@@ -1,0 +1,46 @@
+<project name="Phrase-structure dependency scorer" default="dist" basedir=".">
+  <description>
+    Build file for the phrase-structure dependency scorer
+  </description>
+  <property name="src"     location="src" />
+  <property name="classes" location="classes" />
+  <property name="dist"    location="dist" />
+  <property name="doc"     location="doc" />
+
+  <path id="classpath">
+    <pathelement path="${classpath}" />
+  </path>
+  
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${classes}"/>
+  </target>
+  
+  <target name="build" depends="init"
+          description="compile source">
+    <javac srcdir="${src}" destdir="${classes}" debug="off">
+      <classpath refid="classpath" />
+    </javac>
+  </target>
+
+  <target name="doc" depends="init"
+          description="create javadoc files">
+    <mkdir dir="${doc}" />
+    <javadoc sourcepath="${src}" destdir="${doc}">
+      <classpath refid="classpath" />
+    </javadoc>
+  </target>
+
+  <target name="dist" depends="build, doc"
+          description="generate redistributable jar">
+    <mkdir dir="${dist}" />
+    <jar jarfile="${dist}/scorer.jar" basedir="${classes}" />
+  </target>
+
+  <target name="clean"
+          description="delete generated files">
+  <delete dir="${classes}" />
+  <delete dir="${dist}" />
+  <delete dir="${doc}" />
+  </target>
+</project>
