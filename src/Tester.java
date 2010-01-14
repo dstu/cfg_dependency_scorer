@@ -18,74 +18,47 @@ import ling.PennTreeReader;
  */
 public class Tester {
 
-	public static void main(String[] args) throws FileNotFoundException {
-		
-		TreeEvaluator _tEval = new TreeEvaluator();
-		
-		File _gold=new File("22.gold");
-	    Reader _goldIn=new  FileReader(_gold);
-	   
-	    File _eval=new File("22p.txt");
-	    Reader _evalIn=new  FileReader(_eval);
-	   
-	    PennTreeReader _goldReader = new PennTreeReader(_goldIn);
-	    PennTreeReader _evalReader = new PennTreeReader(_evalIn);
-	  
+	public static void main(String[] args) {
+            String goldFileName = "22.gold";
+            String evalFileName = "22p.txt";
+            if (args.length == 2) {
+                goldFileName = args[0];
+                evalFileName = args[1];
+            } else if (args.length != 0) {
+                System.err.println("Usage: java Tester [goldfile] [testfile]");
+                System.err.println("Default goldfile: " + goldFileName);
+                System.err.println("Default testfile: " + evalFileName);
+                System.exit(-1);
+            }
+
+	    PennTreeReader _goldReader = null;
+            try {
+                _goldReader = new PennTreeReader(new FileReader(goldFileName));
+            } catch (FileNotFoundException fnfe) {
+                System.err.println("File " + goldFileName + " does not exist.");
+                System.exit(-1);
+            }
+
+	    PennTreeReader _evalReader = null;
+            try {
+                _evalReader = new PennTreeReader(new FileReader(evalFileName));
+            } catch (FileNotFoundException fnfe) {
+                System.err.println("File " + evalFileName + " does not exist.");
+                System.exit(-1);
+            }
+
+            TreeEvaluator _tEval = new TreeEvaluator();
+
 	    double _sum=0; int _nos=0;
 	    
 	    ArrayList<Double> _scores = new ArrayList<Double>();
 	    
-	//    while(_goldReader.hasNext() && _evalReader.hasNext()) {
-	
+	   while(_goldReader.hasNext() && _evalReader.hasNext()) {
 	    	Double _pval = new Double(_tEval.EvaluateTree(_goldReader.next(),_evalReader.next()));
 	    	_scores.add(_pval);
 	    	_sum=_sum+_pval.doubleValue();
 	    	_nos++;
 	    	System.out.println(_nos +" : "+ _pval.doubleValue());
-	  //  }
-	}
-	
-	public static void splitLabels(Tree<String> _inputTree) {
-		
-		String _label=_inputTree.getLabel();
-		String[] _lbls=_label.split("=");
-		
-		if(_lbls[1].equalsIgnoreCase("S")) {
-			_inputTree.left=null;
-			_inputTree.label="S";
-			_inputTree.right=null;
-		}
-		
-		else if(_lbls[1].equalsIgnoreCase("L")) {
-			_inputTree.left=null;
-			_inputTree.label=_lbls[1];
-			_inputTree.right=_lbls[2];
-		}
-		
-		else if(_lbls[1].equalsIgnoreCase("R")) {
-			_inputTree.left=_lbls[0];
-			_inputTree.label=_lbls[1];
-			_inputTree.right=null;
-		}
-		else if(_lbls[1].equalsIgnoreCase("X")) {
-			_inputTree.left=_lbls[0];
-			_inputTree.label="X";
-			if(_lbls.length<3)
-			_inputTree.right=null;
-			else
-			_inputTree.right=_lbls[2];
-		}
-		else if(_lbls[1]!=null) {
-			_inputTree.left=null;
-			_inputTree.label=_lbls[1];
-			_inputTree.right=_lbls[2];
-		}
-
-		if(_inputTree.isLeaf())
-			return;
-		else
-			for(Tree<String> _child : _inputTree.getChildren())
-				splitLabels(_child);
-		
-	}
+	   }
+	}	
 }
