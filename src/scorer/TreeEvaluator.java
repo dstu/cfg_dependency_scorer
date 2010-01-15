@@ -55,6 +55,8 @@ public class TreeEvaluator {
 
         public boolean isMisparse() { return misparse; }
         public void setMisparse(boolean misparse) { this.misparse = misparse; }
+
+        public boolean isCompletelyCorrect() { return !misparse && (arcs == correctArcs); }
     }
 
 	public static EvaluationResult evaluateTree(Tree<String> _goldTree, Tree<String> _parsedTree) {

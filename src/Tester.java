@@ -49,8 +49,10 @@ public class Tester {
             }
 
             int trees = 0;
-            int totalArcsRight = 0;
+            int totalArcsCorrect = 0;
             int totalArcs = 0;
+            float runningAverage = 0;
+            int totalTreesCorrect = 0;
 	    
 	   while(_goldReader.hasNext() && _evalReader.hasNext()) {
                trees++;
@@ -58,12 +60,19 @@ public class Tester {
                if (result.isMisparse()) {
                    System.out.println(trees + ":\tmisparse");
                } else {
-                   System.out.println(trees + ":\t" + result.getCorrectArcs() + "/" + result.getArcs());
-                   totalArcsRight += result.getCorrectArcs();
-                   totalArcs += result.getArcs();
+                   if (result.isCompletelyCorrect()) {
+                       totalTreesCorrect++;
+                   }
+                   // System.out.println(trees + ":\t" + result.getCorrectArcs() + "/" + result.getArcs());
+                   runningAverage += ((float)result.getCorrectArcs()) / result.getArcs();
+                   totalArcsCorrect += result.getCorrectArcs();
                }
+               totalArcs += result.getArcs();
            }
 
-           System.out.println("Total:\t" + totalArcsRight + "/" + totalArcs);
+           System.out.println("Total trees:\t" + trees);
+           System.out.println("UAS (micro):\t" + ((float)totalArcsCorrect) / totalArcs);
+           System.out.println("UAS (macro):\t" + runningAverage / trees);
+           System.out.println("Exact match:\t" + ((float)totalTreesCorrect) / trees);
 	}
 }
