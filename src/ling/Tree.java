@@ -110,7 +110,6 @@ public class Tree<L> implements Serializable {
   /** Clone the structure of the tree.  Unfortunately, the new labels are copied by
    * reference from the current tree.
    * 
-   * @return
    */
   public Tree<L> shallowClone() {
   	ArrayList<Tree<L>> newChildren = new ArrayList<Tree<L>>(children.size());

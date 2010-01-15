@@ -9,12 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ling.*;
-import scorer.TreeEvaluator;
-import ling.PennTreeReader;
+import static scorer.TreeEvaluator.evaluateTree;
+import static scorer.TreeEvaluator.EvaluationResult;
+
 
 /**
- * @author Deepak Santhanam
- * deepak@cs.brown.edu
+ * @author Deepak Santhanam <deepak@cs.brown.edu>
+ * @author Stu Black <dsblack@cs.brown.edu>
  */
 public class Tester {
 
@@ -47,18 +48,22 @@ public class Tester {
                 System.exit(-1);
             }
 
-            TreeEvaluator _tEval = new TreeEvaluator();
-
-	    double _sum=0; int _nos=0;
-	    
-	    ArrayList<Double> _scores = new ArrayList<Double>();
+            int trees = 0;
+            int totalArcsRight = 0;
+            int totalArcs = 0;
 	    
 	   while(_goldReader.hasNext() && _evalReader.hasNext()) {
-	    	Double _pval = new Double(_tEval.EvaluateTree(_goldReader.next(),_evalReader.next()));
-	    	_scores.add(_pval);
-	    	_sum=_sum+_pval.doubleValue();
-	    	_nos++;
-	    	System.out.println(_nos +" : "+ _pval.doubleValue());
-	   }
-	}	
+               trees++;
+               EvaluationResult result = evaluateTree(_goldReader.next(), _evalReader.next());
+               if (result.isMisparse()) {
+                   System.out.println(trees + ":\tmisparse");
+               } else {
+                   System.out.println(trees + ":\t" + result.getCorrectArcs() + "/" + result.getArcs());
+                   totalArcsRight += result.getCorrectArcs();
+                   totalArcs += result.getArcs();
+               }
+           }
+
+           System.out.println("Total:\t" + totalArcsRight + "/" + totalArcs);
+	}
 }
