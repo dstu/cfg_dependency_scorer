@@ -36,6 +36,7 @@ public class TreeEvaluator {
         protected int arcs;
         protected int correctArcs;
         protected boolean misparse;
+        protected String misparseReason;
 
         public EvaluationResult(int arcs, int correctArcs) {
             this(arcs, correctArcs, false);
@@ -45,6 +46,13 @@ public class TreeEvaluator {
             this.arcs = arcs;
             this.correctArcs = correctArcs;
             this.misparse = misparse;
+        }
+
+        public EvaluationResult(int arcs, int correctArcs, MisparseException ex) {
+            this.arcs = arcs;
+            this.correctArcs = correctArcs;
+            this.misparse = true;
+            this.misparseReason = ex.getMessage();
         }
 
         public int getArcs() { return arcs; }
@@ -57,13 +65,15 @@ public class TreeEvaluator {
         public void setMisparse(boolean misparse) { this.misparse = misparse; }
 
         public boolean isCompletelyCorrect() { return !misparse && (arcs == correctArcs); }
+
+        public String getMisparseMessage() { return misparseReason; } 
     }
 
 	public static EvaluationResult evaluateTree(Tree<String> _goldTree, Tree<String> _parsedTree) {
 		int _goldtreeSize=_goldTree.getYield().size();
 		int _parsedtreeSize=_parsedTree.getYield().size();
 		if(_goldtreeSize!=_parsedtreeSize) {
-                    return new EvaluationResult(_goldtreeSize, 0, true);
+                    return new EvaluationResult(_goldtreeSize, 0, new MisparseException("gold size (" + _goldtreeSize + ") and test tree size (" + _parsedtreeSize + ") differ"));
 		}
 
                 try {
@@ -79,7 +89,7 @@ public class TreeEvaluator {
 
                     return new EvaluationResult(goldParents.length, correctArcs, false);
                 } catch (MisparseException me) {
-                    return new EvaluationResult(_goldtreeSize, 0, true);
+                    return new EvaluationResult(_goldtreeSize, 0, me);
                 }
         }
 

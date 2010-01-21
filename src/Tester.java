@@ -53,12 +53,14 @@ public class Tester {
             int totalArcs = 0;
             float runningAverage = 0;
             int totalTreesCorrect = 0;
+            int misparses = 0;
 	    
 	   while(_goldReader.hasNext() && _evalReader.hasNext()) {
                trees++;
                EvaluationResult result = evaluateTree(_goldReader.next(), _evalReader.next());
                if (result.isMisparse()) {
-                   System.out.println(trees + ":\tmisparse");
+                   System.out.println(trees + ":\tmisparse: " + result.getMisparseMessage());
+                   misparses++;
                } else {
                    if (result.isCompletelyCorrect()) {
                        totalTreesCorrect++;
@@ -71,6 +73,7 @@ public class Tester {
            }
 
            System.out.println("Total trees:\t" + trees);
+           System.out.println("Misparses:\t" + misparses);
            System.out.println("UAS (micro):\t" + ((float)totalArcsCorrect) / totalArcs);
            System.out.println("UAS (macro):\t" + runningAverage / trees);
            System.out.println("Exact match:\t" + ((float)totalTreesCorrect) / trees);
